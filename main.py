@@ -11,8 +11,8 @@ load_dotenv()
 
 qobuz_email = os.environ["QOBUZ_EMAIL"]
 qobuz_pasword = os.environ["QOBUZ_PASSWORD"]
-music_directory = os.environ.get("MUSIC_DIRECTORY", "downloads")
-config_directory = os.environ.get("CONFIG_DIRECTORY", "config")
+music_directory = os.environ.get("MUSIC_DIRECTORY", "/downloads")
+config_directory = os.environ.get("CONFIG_DIRECTORY", "/config")
 quality = int(os.environ.get("QUALITY", 27))
 lastfm_api_key = os.environ.get("LASTFM_API_KEY", "b3d36aca59dd6dfa595c7034c8b0fa59")
 lastfm_username = os.environ["LASTFM_USERNAME"]
