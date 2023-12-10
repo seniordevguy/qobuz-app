@@ -40,3 +40,6 @@ This basically syncs everything you listen to on Qobuz to LastFM. This allows th
 
 ## Questions
 Reach out to @jeremywade1337 on Telegram if you have any questions 
+
+## Terms of Use
+This project was intended for educational purposes only. I am not responsible for how you use this project.
