@@ -21,7 +21,8 @@ run_every_x_hours = int(os.environ.get("RUN_EVERY_X_HOURS", 1))
 qobuz = QobuzDL(
     directory=music_directory,
     quality=quality,
-    downloads_db=os.path.join(config_directory, "db")
+    downloads_db=os.path.join(config_directory, "db"),
+    folder_format="{artist}/{artist} - {album}",
 )
 
 def fetch_all_top_albums(api_key, user):
@@ -52,6 +53,17 @@ def fetch_all_top_albums(api_key, user):
     formatted_albums = [f"{album['artist']['name']} - {album['name']}" for album in albums]
     return formatted_albums
 
+def filter_existing_albums(albums):
+    new_albums = []
+    for album in albums:
+        # Split the album title at the '-' character and trim whitespace
+        parts = album.split('-')
+        artist = parts[0].strip() if parts else ""
+        # Check if the path for the artist does NOT exist
+        if not os.path.exists(os.path.join(music_directory, artist, album)):
+            new_albums.append(album)
+    return new_albums
+
 def get_album_ids(qobuz: QobuzDL, albums):
     album_ids = []
 
@@ -60,7 +72,6 @@ def get_album_ids(qobuz: QobuzDL, albums):
         if len(result) == 1:
             album_id = result[0].split('/')[-1]
             album_ids.append(album_id)
-
     return album_ids
 
 def download_album_ids(qobuz: QobuzDL, album_ids):
@@ -71,7 +82,8 @@ def job():
     qobuz.get_tokens()
     qobuz.initialize_client(qobuz_email, qobuz_pasword, qobuz.app_id, qobuz.secrets)
     albums = fetch_all_top_albums(lastfm_api_key, lastfm_username)
-    ids = get_album_ids(qobuz, albums)
+    new_albums = filter_existing_albums(albums)
+    ids = get_album_ids(qobuz, new_albums)
     download_album_ids(qobuz, ids)
 
 schedule.every(run_every_x_hours).hours.do(job)
