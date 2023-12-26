@@ -18,10 +18,6 @@ config_directory = os.environ.get("CONFIG_DIRECTORY", "/config")
 quality = int(os.environ.get("QUALITY", 27))
 run_every_x_hours = int(os.environ.get("RUN_EVERY_X_HOURS", 1))
 
-# Or register your APP_ID and APP_SECRET
-qobuz_api.register_app(qobuz_app_id)
-qobuz_user = qobuz_cl.User(qobuz_email, qobuz_pasword)
-
 qobuz = QobuzDL(
     directory=music_directory,
     quality=quality,
@@ -75,6 +71,10 @@ def job():
         # Initialize the Qobuz client
         qobuz.get_tokens()
         qobuz.initialize_client(qobuz_email, qobuz_pasword, qobuz.app_id, qobuz.secrets)
+
+        # register your APP_ID
+        qobuz_api.register_app(qobuz_app_id)
+        qobuz_user = qobuz_cl.User(qobuz_email, qobuz_pasword)
 
         # Retrieve favorite albums
         favorite_albums = get_user_favorites(qobuz_user, fav_type="albums", raw=True)
