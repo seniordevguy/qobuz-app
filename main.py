@@ -54,18 +54,16 @@ def get_user_favorites(user: qobuz_cl.User, fav_type, raw=False):
         offset += limit
     return favorites
 
-def filter_existing_albums(albums):
-    new_albums = []
-    for album in albums:
-        # Check if the path for the artist does NOT exist
-        if not os.path.exists(os.path.join(music_directory, album['artist'], f"{album['artist']} - {album['title']}")):
-            new_albums.append(album)
-    return new_albums
-
 def download_album_ids(qobuz: QobuzDL, user: qobuz_cl.User, album_ids):
     for album_id in album_ids:
-        qobuz.download_from_id(album_id)
-        user.favorites_del(albums=[album_id])
+        try:
+            # Attempt to download the album
+            qobuz.download_from_id(album_id)
+            # If download is successful, remove from favorites
+            user.favorites_del(albums=[album_id])
+        except Exception as e:
+            # Handle any exceptions that occur
+            print(f"An error occurred with album ID {album_id}: {e}")
 
 def job():
     try:
@@ -80,22 +78,11 @@ def job():
         # Retrieve favorite albums
         favorite_albums = get_user_favorites(qobuz_user, fav_type="albums", raw=True)
 
-        print(f"Retrieved {len(favorite_albums)} albums...")
-
-        # Parse albums
-        parsed_albums = []
-        for album in favorite_albums:
-            album_id = album['id']
-            album_info = {'id': album_id, 'title': album['title'], 'artist': album['artist']['name']}
-            parsed_albums.append(album_info)
-
-        # Filter new albums
-        new_albums = filter_existing_albums(parsed_albums)
-        print(f"Filtered Existing: Processing {len(new_albums)} albums...")
+        print(f"Processing {len(favorite_albums)} albums...")
 
         # Download new albums
-        new_album_ids = [album['id'] for album in new_albums]
-        download_album_ids(qobuz, qobuz_user, new_album_ids)
+        album_ids = [album['id'] for album in favorite_albums]
+        download_album_ids(qobuz, qobuz_user, album_ids)
 
     except Exception as e:
         # Handle exceptions (e.g., network issues, data access problems)
