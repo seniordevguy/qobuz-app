@@ -1,4 +1,3 @@
 python-dotenv==1.0.0
-qobuz==0.0.2
 qobuz_dl==0.9.9.10
 schedule==1.2.1

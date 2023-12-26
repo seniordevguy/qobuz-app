@@ -10,5 +10,7 @@ COPY . .
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
+RUN pip install git+https://github.com/fdenivac/python-qobuz
+
 # Run app.py when the container launches
 CMD ["python", "./main.py"]
