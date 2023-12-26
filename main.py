@@ -62,9 +62,10 @@ def filter_existing_albums(albums):
             new_albums.append(album)
     return new_albums
 
-def download_album_ids(qobuz: QobuzDL, album_ids):
+def download_album_ids(qobuz: QobuzDL, user: qobuz_cl.User, album_ids):
     for album_id in album_ids:
         qobuz.download_from_id(album_id)
+        user.favorites_del(albums=[album_id])
 
 def job():
     try:
@@ -94,7 +95,7 @@ def job():
 
         # Download new albums
         new_album_ids = [album['id'] for album in new_albums]
-        download_album_ids(qobuz, new_album_ids)
+        download_album_ids(qobuz, qobuz_user, new_album_ids)
 
     except Exception as e:
         # Handle exceptions (e.g., network issues, data access problems)
