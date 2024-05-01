@@ -173,7 +173,7 @@ def run_continuously(interval=1):
     continuous_thread.start()
     return cease_continuous_run
 
-schedule.every(1).seconds.do(job)
+schedule.every(3600).seconds.do(job)
 
 # start the background thread
 stop_run_continuously = run_continuously()
